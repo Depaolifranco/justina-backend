@@ -1,0 +1,233 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model DocumentType {
+  id          String    @id @default(uuid())
+  description String    @db.VarChar(255)
+  patient     Patient[]
+}
+
+model Sex {
+  id          String    @id @default(uuid())
+  description String    @db.VarChar(255)
+  patient     Patient[]
+}
+
+model Patient {
+  id              String          @id @default(uuid())
+  sexId           String?
+  maritalStatusId String?
+  statusId        String?
+  documentTypeId  String?
+  name            String          @db.VarChar(255)
+  lastname        String          @db.VarChar(255)
+  documentNumber  Int
+  address         String          @db.VarChar(255)
+  age             Int
+  email           String          @db.VarChar(255)
+  phoneNumber     Int
+  sex             Sex?            @relation(fields: [sexId], references: [id], onDelete: Cascade)
+  maritalStatus   MaritalStatus?  @relation(fields: [maritalStatusId], references: [id], onDelete: Cascade)
+  status          Status?         @relation(fields: [statusId], references: [id], onDelete: Cascade)
+  documentType    DocumentType?   @relation(fields: [documentTypeId], references: [id], onDelete: Cascade)
+  socialHistory   SocialHistory[]
+  doctorsVisit    DoctorsVisit[]
+  clinicHistory   ClinicHistory[]
+
+  @@index([sexId], map: "sexId")
+  @@index([maritalStatusId], map: "maritalStatusId")
+  @@index([statusId], map: "statusId")
+  @@index([documentTypeId], map: "documentTypeId")
+}
+
+model SocialHistory {
+  id               String  @id @default(uuid())
+  patientId        String
+  neverAlcohol     Boolean
+  rarelyAlcohol    Boolean
+  sometimesAlcohol Boolean
+  usuallyAlcohol   Boolean
+  neverGym         Boolean
+  rarelyGym        Boolean
+  sometimesGym     Boolean
+  usuallyGym       Boolean
+  neverDrugs       Boolean
+  rarelyDrugs      Boolean
+  usuallyDrugs     Boolean
+  descriptionDrug  String  @db.VarChar(255)
+  neverCoffee      Boolean
+  rarelyCoffee     Boolean
+  sometimesCoffee  Boolean
+  usuallyCoffee    Boolean
+  neverSmoke       Boolean
+  rarelySmoke      Boolean
+  usuallySmoke     Boolean
+  descriptionSmoke String  @db.VarChar(255)
+  patient          Patient @relation(fields: [patientId], references: [id], onDelete: Cascade)
+
+  @@index([patientId], map: "patientId")
+}
+
+model DoctorsVisit {
+  id           String   @id @default(uuid())
+  patientId    String
+  timeDate     DateTime @default(now())
+  reason       String   @db.VarChar(255)
+  method       String   @db.VarChar(255)
+  idiopathic   Int
+  creatinine   Int
+  clearence    Int
+  peritoneal   Int
+  waitingYears Int
+  operatives   Int
+  patient      Patient  @relation(fields: [patientId], references: [id], onDelete: Cascade)
+
+  @@index([patientId], map: "patientId")
+}
+
+model ClinicHistory {
+  id           String     @id @default(uuid())
+  patientId    String
+  specialityId String
+  description  String     @db.VarChar(255)
+  timeDate     DateTime   @default(now())
+  patient      Patient    @relation(fields: [patientId], references: [id], onDelete: Cascade)
+  speciality   Speciality @relation(fields: [specialityId], references: [id], onDelete: Cascade)
+
+  @@index([patientId], map: "patientId")
+  @@index([specialityId], map: "specialityId")
+}
+
+model HealthCenter {
+  id                  String     @id @default(uuid())
+  specialityId        String
+  funderId            String
+  name                String     @db.VarChar(255)
+  address             String     @db.VarChar(255)
+  medicDirector       String     @db.VarChar(255)
+  operatingRoom       Int
+  intensiveTherapyBed Int
+  preTherapyBed       Int
+  speciality          Speciality @relation(fields: [specialityId], references: [id], onDelete: Cascade)
+  funder              Funder     @relation(fields: [funderId], references: [id], onDelete: Cascade)
+
+  @@index([specialityId], map: "specialityId")
+  @@index([funderId], map: "funderId")
+}
+
+model Funder {
+  id                  String          @id @default(uuid())
+  transplantTypeId    String
+  healthInsuranceId   String
+  name                String          @db.VarChar(255)
+  address             String          @db.VarChar(255)
+  medicDirector       String          @db.VarChar(255)
+  operatingRoom       Int
+  intensiveTherapyBed Int
+  preTherapyBed       Int
+  transplantType      TransplantType  @relation(fields: [transplantTypeId], references: [id], onDelete: Cascade)
+  healthInsurance     HealthInsurance @relation(fields: [healthInsuranceId], references: [id], onDelete: Cascade)
+  healthCenter        HealthCenter[]
+
+  @@index([transplantTypeId], map: "transplantTypeId")
+  @@index([healthInsuranceId], map: "healthInsuranceId")
+}
+
+model TransplantType {
+  id          String   @id @default(uuid())
+  description String   @db.VarChar(255)
+  funder      Funder[]
+}
+
+model HealthInsurance {
+  id       String   @id @default(uuid())
+  name     String   @db.VarChar(255)
+  coverage String   @db.VarChar(255)
+  funder   Funder[]
+}
+
+model MaritalStatus {
+  id          String    @id @default(uuid())
+  description String    @db.VarChar(255)
+  medic       Medic[]
+  patient     Patient[]
+}
+
+model Medic {
+  id              String        @id @default(uuid())
+  maritalStatusId String
+  statusId        String
+  specialityId    String
+  userId          String
+  email           String        @db.VarChar(255)
+  password_2      String        @db.VarChar(255)
+  medicalLicense  Int
+  phoneNumber     String        @db.VarChar(255)
+  maritalStatus   MaritalStatus @relation(fields: [maritalStatusId], references: [id], onDelete: Cascade)
+  status          Status        @relation(fields: [statusId], references: [id], onDelete: Cascade)
+  speciality      Speciality    @relation(fields: [specialityId], references: [id], onDelete: Cascade)
+  user            User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([maritalStatusId], map: "maritalStatusId")
+  @@index([specialityId], map: "specialityId")
+  @@index([statusId], map: "statusId")
+  @@index([userId], map: "userId")
+}
+
+model NephrologistType {
+  id                    String       @id @default(uuid())
+  elevatedBloodPressure Boolean
+  diabetes              Boolean
+  idiopathic            String       @db.VarChar(255)
+  autoimmune            Boolean
+  nephropathy           Boolean
+  creatinine            Int
+  clearence             Int
+  access                String       @db.VarChar(255)
+  peritoneal            String       @db.VarChar(255)
+  waitingYears          Int
+  operatives            Int
+  speciality            Speciality[]
+}
+
+model Speciality {
+  id                 String           @id @default(uuid())
+  nephrologistTypeId String
+  description        String           @db.VarChar(255)
+  nephrologistType   NephrologistType @relation(fields: [nephrologistTypeId], references: [id], onDelete: Cascade)
+  medic              Medic[]
+  clinicHistory      ClinicHistory[]
+  healthCenter       HealthCenter[]
+
+  @@index([nephrologistTypeId], map: "nephrologistTypeId")
+}
+
+model Status {
+  id          String    @id @default(uuid())
+  description String    @db.VarChar(255)
+  medic       Medic[]
+  pacient     Patient[]
+}
+
+model User {
+  id         String    @id @default(uuid())
+  userTypeId String?
+  email      String    @unique @db.VarChar(255)
+  password   String    @db.VarChar(255)
+  userType   UserType? @relation(fields: [userTypeId], references: [id], onDelete: Cascade)
+  medic      Medic[]
+
+  @@index([userTypeId], map: "userTypeId")
+}
+
+model UserType {
+  id          String @id @default(uuid())
+  description String @db.VarChar(255)
+  user        User[]
+}
