@@ -48,7 +48,7 @@ $ npm run start:prod
 ## Running migrations
 
 ```bash
-$ npm run start
+$ npm run migrate
 ```
 
 ## Test
