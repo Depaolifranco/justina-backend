@@ -6,9 +6,6 @@ import {
   Post,
   UseGuards,
   Request,
-  HttpStatus,
-  Param,
-  Res,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
@@ -25,11 +22,11 @@ export class AuthController {
     return await this.authService.login(req);
   }
 
-  // Se ingresa el mail, se valida que no exista otro mail y se envía el token y se almacena en la cache
   @HttpCode(200)
   @Post('send-verification-email')
   async sendVerificaationEmail(@Body() req) {
     await this.authService.sendVerificationEmail(req.email);
+    return 'success';
   }
 
   @HttpCode(200)

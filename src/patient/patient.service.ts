@@ -11,17 +11,8 @@ export class PatientService {
   }
 
   async createPatient(patient: CreatePatientDto) {
-    const data = {
-      name: patient.name,
-      lastname: patient.lastname,
-      documentNumber: patient.documentNumber,
-      address: patient.address,
-      age: patient.age,
-      email: patient.email,
-      phoneNumber: patient.phoneNumber,
-    };
     return this.dbService.patient.create({
-      data,
+      data: patient,
     });
   }
 }

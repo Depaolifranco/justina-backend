@@ -10,9 +10,16 @@ import { UserModule } from './user/user.module';
 import { PatientModule } from './patient/patient.module';
 import { PatientService } from './patient/patient.service';
 import { AuthController } from './auth/auth.controller';
+import { ClinicHistoryModule } from './clinic-history/clinic-history.module';
 
 @Module({
-  imports: [AuthModule, PrismaModule, UserModule, PatientModule],
+  imports: [
+    AuthModule,
+    PrismaModule,
+    UserModule,
+    PatientModule,
+    ClinicHistoryModule,
+  ],
   controllers: [AppController, UserController, AuthController],
   providers: [AppService, PrismaService, UserService, PatientService],
 })

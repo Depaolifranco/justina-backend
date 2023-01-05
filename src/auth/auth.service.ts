@@ -12,13 +12,15 @@ import { LoginDto } from './dto/login.dto';
 import { comparePassword } from '../utils/bcrypt';
 import { User } from '@prisma/client';
 import { Cache } from 'cache-manager';
+import { MailerService } from '@nestjs-modules/mailer/dist';
 
-const FIVE_MINUTES_IN_SECONDS = 300;
+const FIVE_MINUTES_IN_MILISECONDS = 300000;
 
 @Injectable()
 export class AuthService {
   constructor(
     @Inject(CACHE_MANAGER) private cacheManager: Cache,
+    private mailService: MailerService,
     private userService: UserService,
     private jwtService: JwtService,
   ) {}
@@ -53,8 +55,15 @@ export class AuthService {
       if (user) {
         throw new UnauthorizedException('User already exist');
       }
-      // TODO Se envía el token al email ingresado y se almacena en cache
+
       const code = this.generate6digitCode();
+
+      await this.mailService.sendMail({
+        to: email,
+        from: process.env.SMTP_SENDER,
+        subject: 'Codigo Validacion',
+        text: code.toString(),
+      });
       await this.addToCache(email, code);
     } catch (e) {
       throw new UnprocessableEntityException(e.message);
@@ -62,7 +71,7 @@ export class AuthService {
   }
 
   private async addToCache(key: string, item: number): Promise<void> {
-    await this.cacheManager.set(key, item, FIVE_MINUTES_IN_SECONDS);
+    await this.cacheManager.set(key, item, FIVE_MINUTES_IN_MILISECONDS);
   }
 
   async verifyCacheCode(email: string, code: number) {

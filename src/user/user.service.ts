@@ -9,15 +9,23 @@ export class UserService {
   constructor(private dbService: PrismaService) {}
 
   async findAll() {
-    return this.dbService.user.findMany();
+    const users = await this.dbService.user.findMany();
+    users.map((user) => {
+      delete user.password;
+    });
+
+    return users;
   }
 
   async findOne(username: string): Promise<User | undefined> {
-    return await this.dbService.user.findFirst({
+    const user = await this.dbService.user.findFirst({
       where: {
         email: username,
       },
     });
+    delete user.password;
+
+    return user;
   }
 
   async createUser(user: CreateUserDto) {

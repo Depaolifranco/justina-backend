@@ -8,6 +8,22 @@ export class CreatePatientDto implements Prisma.PatientCreateInput {
 
   @IsString()
   @IsNotEmpty()
+  sexId: string;
+
+  @IsString()
+  @IsNotEmpty()
+  maritalStatusId: string;
+
+  @IsString()
+  @IsNotEmpty()
+  statusId: string;
+
+  @IsString()
+  @IsNotEmpty()
+  documentTypeId: string;
+
+  @IsString()
+  @IsNotEmpty()
   lastname: string;
 
   @IsInt()

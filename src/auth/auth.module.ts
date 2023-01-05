@@ -8,6 +8,7 @@ import { jwtConstants } from './constants';
 import { AuthController } from './auth.controller';
 import { UserService } from '../user/user.service';
 import * as redisStore from 'cache-manager-redis-store';
+import { MailerModule } from '@nestjs-modules/mailer';
 
 @Module({
   imports: [
@@ -22,6 +23,15 @@ import * as redisStore from 'cache-manager-redis-store';
       host: 'localhost',
       port: 6379,
       isGlobal: true,
+    }),
+    MailerModule.forRoot({
+      transport: {
+        host: process.env.SMTP_HOST,
+        auth: {
+          user: process.env.SMTP_USER,
+          pass: process.env.SMTP_PASSWORD,
+        },
+      },
     }),
   ],
   controllers: [AuthController],
