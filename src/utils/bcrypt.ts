@@ -7,3 +7,7 @@ export function encodePassword(rawPassword: string) {
 export function comparePassword(rawPassword1: string, rawPassword2: string) {
   return bcrypt.compare(rawPassword1, rawPassword2);
 }
+
+export function encodePasswordSync(rawPassword: string) {
+  return bcrypt.hashSync(rawPassword, 10);
+}

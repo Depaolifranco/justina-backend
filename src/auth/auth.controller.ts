@@ -16,6 +16,12 @@ import { JwtAuthGuard } from './guards/jwt-auth.guard';
 export class AuthController {
   constructor(private authService: AuthService) {}
 
+  @UseGuards(JwtAuthGuard)
+  @Get('profile')
+  getProfile(@Request() req) {
+    return req.user;
+  }
+
   @HttpCode(200)
   @Post('auth/login')
   async login(@Body() req) {
@@ -24,9 +30,14 @@ export class AuthController {
 
   @HttpCode(200)
   @Post('send-verification-email')
-  async sendVerificaationEmail(@Body() req) {
+  async sendVerificationEmail(@Body() req) {
     await this.authService.sendVerificationEmail(req.email);
-    return 'success';
+  }
+
+  @HttpCode(200)
+  @Post('send-forgot-password-email')
+  async sendEmailForgotPassword(@Body() req) {
+    await this.authService.sendEmailForgotPassword(req.email);
   }
 
   @HttpCode(200)
@@ -35,9 +46,9 @@ export class AuthController {
     return await this.authService.verifyCacheCode(req.email, req.code);
   }
 
-  @UseGuards(JwtAuthGuard)
-  @Get('profile')
-  getProfile(@Request() req) {
-    return req.user;
+  @Post('forgot-password')
+  async changeForgottenPassword(@Body() body) {
+    console.log(body);
+    return this.authService.changeForgottenPassword(body.email, body.password);
   }
 }

@@ -55,7 +55,6 @@ export class AuthService {
       if (user) {
         throw new UnauthorizedException('User already exist');
       }
-
       const code = this.generate6digitCode();
 
       await this.mailService.sendMail({
@@ -88,5 +87,29 @@ export class AuthService {
 
   private generate6digitCode(): number {
     return Math.floor(100000 + Math.random() * 900000);
+  }
+
+  async sendEmailForgotPassword(email: string) {
+    try {
+      const user = await this.userService.findOne(email);
+      if (!user) {
+        throw new UnauthorizedException('User does not exist');
+      }
+      const code = this.generate6digitCode();
+
+      await this.mailService.sendMail({
+        to: email,
+        from: process.env.SMTP_SENDER,
+        subject: 'Reseteo de contraseña',
+        text: code.toString(),
+      });
+      await this.addToCache(email, code);
+    } catch (e) {
+      throw new UnprocessableEntityException(e.message);
+    }
+  }
+
+  async changeForgottenPassword(email: string, password: string) {
+    await this.userService.changePassword(email, password);
   }
 }

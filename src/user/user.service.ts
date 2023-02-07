@@ -23,8 +23,6 @@ export class UserService {
         email: username,
       },
     });
-    delete user.password;
-
     return user;
   }
 
@@ -41,6 +39,19 @@ export class UserService {
       data,
       where: {
         id,
+      },
+    });
+  }
+
+  async changePassword(email: string, password: string) {
+    const passwordHashed = await encodePassword(password);
+    return this.dbService.user.update({
+      data: {
+        email,
+        password: passwordHashed,
+      },
+      where: {
+        email,
       },
     });
   }

@@ -13,7 +13,7 @@ import { UpdateClinicHistoryDto } from './dto/update-clinic-history.dto';
 
 @Controller('clinic-history')
 export class ClinicHistoryController {
-  constructor(private readonly clinicHistoryService: ClinicHistoryService) {}
+  constructor(private clinicHistoryService: ClinicHistoryService) {}
 
   @Post()
   create(@Body() createClinicHistoryDto: CreateClinicHistoryDto) {
@@ -23,6 +23,21 @@ export class ClinicHistoryController {
   @Get()
   findAll() {
     return this.clinicHistoryService.findAll();
+  }
+
+  @Post('filter')
+  async showAllClinicHistory(
+    @Body('page') page: number,
+    @Body('itemPerPage') itemPerPage: number,
+    @Body('patient') patient: object,
+    @Body('orderby') orderby: object,
+  ) {
+    return await this.clinicHistoryService.showAll(
+      page,
+      itemPerPage,
+      patient,
+      orderby,
+    );
   }
 
   @Get(':id')

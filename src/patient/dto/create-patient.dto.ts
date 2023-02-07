@@ -1,5 +1,5 @@
 import { Prisma } from '@prisma/client';
-import { IsNotEmpty, IsString, IsEmail, IsInt } from 'class-validator';
+import { IsNotEmpty, IsString, IsEmail, IsInt, IsDate } from 'class-validator';
 
 export class CreatePatientDto implements Prisma.PatientCreateInput {
   @IsString()
@@ -8,7 +8,7 @@ export class CreatePatientDto implements Prisma.PatientCreateInput {
 
   @IsString()
   @IsNotEmpty()
-  sexId: string;
+  genreId: string;
 
   @IsString()
   @IsNotEmpty()
@@ -34,15 +34,15 @@ export class CreatePatientDto implements Prisma.PatientCreateInput {
   @IsNotEmpty()
   address: string;
 
-  @IsInt()
+  @IsDate()
   @IsNotEmpty()
-  age: number;
+  birthdate: string;
 
   @IsEmail()
   @IsNotEmpty()
   email: string;
 
-  @IsInt()
+  @IsString()
   @IsNotEmpty()
-  phoneNumber: number;
+  phoneNumber: string;
 }

@@ -16,9 +16,11 @@ async function bootstrap() {
 
   const cors = {
     origin: [
+      '*',
+      'https://justina-io.vercel.app/*',
+      'https://justina-io.vercel.app/',
       `http://localhost:${process.env.NODE_PORT}`,
       'http://localhost',
-      '*',
     ],
     methods: 'GET, HEAD, PUT, PATCH, POST, DELETE, OPTIONS',
     preflightContinue: false,
